@@ -1,0 +1,14 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.idea/
+.vscode/
+
+# SQLite-Datenbankdatei (wird lokal per database.py erzeugt)
+server/u_secure.db
+*.db
+
+# Verhindert, dass die 600 Benchmark-Zertifikate später Git überfluten:
+pki/clients/user_*.crt
+pki/clients/user_*.key
