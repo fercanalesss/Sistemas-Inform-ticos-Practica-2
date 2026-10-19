@@ -13,9 +13,15 @@ def RunVpnClient():
     #comprobar que el Servidor es autentico
     ca_path = BASE_DIR / "pki" / "ca" / "ca.crt"
     context.load_verify_locations(cafile=str(ca_path))
-    #Cargar el certificado y clave
+    
+
+    #==========
+    #Cargar el certificado y clave, cambiar los datos de la ultima columna: certificado y la llave aqui para probar distintos usuarios
     client_cert = BASE_DIR / "pki" / "clients" / "profesor_paul.crt"
     client_key = BASE_DIR / "pki" / "clients" / "profesor_paul.key"
+    #==========
+
+
     context.load_cert_chain(certfile=str(client_cert), keyfile=str(client_key))
     #Desactivar el hostname para pruebas locales
     context.check_hostname = False
