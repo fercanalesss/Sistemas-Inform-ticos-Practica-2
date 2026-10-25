@@ -1,17 +1,13 @@
-"""
-Gestión de la Infraestructura de Clave Pública (PKI)
-Cumple con los requisitos RS1 (Certificados X.509v3, Root-CA y mTLS) y RF1
-"""
-
 import os
 import subprocess
 from pathlib import Path
 
+#obtener rutas y definir las carpetas del proyecto
 BASE_DIR = Path(__file__).resolve().parent
 CA_DIR = BASE_DIR / "ca"
 SERVER_DIR = BASE_DIR / "server"
 CLIENTS_DIR = BASE_DIR / "clients"
-
+#rutas para los certificados
 CA_KEY = CA_DIR / "ca.key"
 CA_CRT = CA_DIR / "ca.crt"
 SERVER_KEY = SERVER_DIR / "server.key"
@@ -21,9 +17,8 @@ SERVER_CRT = SERVER_DIR / "server.crt"
 def init_root_ca() -> None:
     # crea la autoridad de certificación (Root-CA) autofirmada de U-Secure
     # genera un par de claves RSA de 4096 bits con una validez de 10 años (RS1)
-
     if CA_KEY.exists() and CA_CRT.exists():
-        print("[*] La Root-CA ya existe en el sistema.")
+        print("=> La Root-CA ya existe en el sistema.")
         return
 
     print("[+] Generando Root-CA corporativa para U-Secure...")
@@ -39,17 +34,16 @@ def init_root_ca() -> None:
 
 
 def issue_server_certificate() -> None:
-    """
-    Genera y firma el certificado digital X.509v3 del servidor VPN
-    Incluye extensiones obligatorias para TLS 1.3:
-        - serverAuth (Extended Key Usage)
-        - SAN (Subject Alternative Name) para 127.0.0.1 y localhost
-    """
+    #Genera y firma el certificado digital X.509v3 del servidor VPN
+    #Incluye extensiones obligatorias para TLS 1.3:
+    #serverAuth (Extended Key Usage)
+    #SAN (Subject Alternative Name) para 127.0.0.1 y localhost
+    
     if SERVER_KEY.exists() and SERVER_CRT.exists():
-        print("[*] El certificado del servidor VPN ya existe.")
+        print("=> El certificado del servidor VPN ya existe.")
         return
 
-    print("[+] Generando certificado para el servidor VPN...")
+    print("=> Generando certificado para el servidor VPN...")
     csr_file = SERVER_DIR / "server.csr"
     ext_file = SERVER_DIR / "server.ext"
 
@@ -93,14 +87,10 @@ def issue_server_certificate() -> None:
 
 
 def issue_client_certificate(username: str, role: str = "PDI") -> tuple[str, str]:
-    """
-    emite un certificado digital X.509v3 individual para un dispositivo BYOD (RF1)
-    asocia el rol en la unidad organizativa (OU) e incluye clientAuth
-
-    :param username: identificador único del usuario corporativo
-    :param role: rol universitario
-    :return: tupla con la ruta al certificado (.crt) y la clave privada (.key)
-    """
+    #emite un certificado digital X.509v3 individual para un dispositivo BYOD (RF1)
+    #:param username: identificador único del usuario corporativo
+    #:param role: rol universitario
+    #:return: tupla con la ruta al certificado (.crt) y la clave privada (.key)
     client_key = CLIENTS_DIR / f"{username}.key"
     client_crt = CLIENTS_DIR / f"{username}.crt"
     csr_file = CLIENTS_DIR / f"{username}.csr"
