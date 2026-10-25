@@ -2,28 +2,28 @@ from pathlib import Path
 import socket
 import ssl
 
-BASE_DIR = Path(__file__).resolve().parent #Buscar directamente la raiz del proyecto
+BASE_DIR = Path(__file__).resolve().parent #Buscar directamente en la raiz del proyecto
 def RunVpnClient():
     #RS2
-    #Misma confguracion que el archivo vpn.py, solo cambia de server a client
+    #Misma confguracion que el archivo vpn.py
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     context.minimum_version = ssl.TLSVersion.TLSv1_3
     context.maximum_version = ssl.TLSVersion.TLSv1_3
-
-    #comprobar que el Servidor es autentico
+    #RS1
+    #comprobar que el servidor es autentico
     ca_path = BASE_DIR / "pki" / "ca" / "ca.crt"
     context.load_verify_locations(cafile=str(ca_path))
     
 
     #==========
-    #Cargar el certificado y clave, cambiar los datos de la ultima columna: certificado y la llave aqui para probar distintos usuarios
+    #Cargar el certificado y clave, cambiar los datos de la ultima columnas
     client_cert = BASE_DIR / "pki" / "clients" / "profesor_paul.crt"
     client_key = BASE_DIR / "pki" / "clients" / "profesor_paul.key"
     #==========
 
 
     context.load_cert_chain(certfile=str(client_cert), keyfile=str(client_key))
-    #Desactivar el hostname para pruebas locales
+    #no hostname para pruebas locales
     context.check_hostname = False
 
     server_host = '127.0.0.1'
@@ -34,7 +34,7 @@ def RunVpnClient():
     
     try:
         secure_sock.connect((server_host, server_port))
-        print("Canal seguro TLS1.3 y mTLS establecido")
+        print("=> Canal TLS1.3 y mTLS establecido")
         #enviar credenciales
         credentials = "profesor_paul:verySecurePassword"
         secure_sock.sendall(credentials.encode('utf-8'))
